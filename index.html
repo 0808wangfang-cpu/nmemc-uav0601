@@ -293,13 +293,12 @@ footer{height:28px;min-height:28px;background:rgba(0,10,25,0.95);border-top:1px 
 .lgbox.shake{animation:shake 0.35s ease}
 
 /* ===== 地图全屏 ===== */
-#mapView{position:relative;cursor:pointer}
+#mapView{position:relative}
 .map-fullscreen-btn{position:absolute;top:10px;right:10px;z-index:200;background:rgba(0,20,50,0.9);border:1px solid rgba(0,212,255,0.5);border-radius:6px;padding:6px 14px;color:#00d4ff;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.2s;font-family:'Noto Sans SC',sans-serif;backdrop-filter:blur(4px)}
 .map-fullscreen-btn:hover{background:rgba(0,40,80,0.95);box-shadow:0 0 12px rgba(0,212,255,0.3)}
-#mapView.is-fullscreen{position:fixed!important;inset:0!important;z-index:500!important;width:100vw!important;height:100vh!important;border-radius:0!important}
-#mapView.is-fullscreen .map-fullscreen-btn{top:16px;right:16px;padding:8px 16px;font-size:15px}
-.fullscreen-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:499}
-.fullscreen-overlay.show{display:block}
+#mapView.is-fullscreen{position:fixed!important;inset:0!important;z-index:600!important;width:100vw!important;height:100vh!important;background:#020b18!important}
+#mapView.is-fullscreen .map-fullscreen-btn{top:16px;right:16px;padding:8px 16px;font-size:15px;z-index:610}
+
 </style>
 </head>
 <body>
@@ -1071,29 +1070,23 @@ let mapIsFullscreen = false;
 function toggleMapFullscreen(e){
     if(e) e.stopPropagation();
     const map = document.getElementById('mapView');
-    const overlay = document.getElementById('mapOverlay');
     const icon = document.getElementById('mapFullIcon');
     const text = document.getElementById('mapFullText');
     mapIsFullscreen = !mapIsFullscreen;
     if(mapIsFullscreen){
         map.classList.add('is-fullscreen');
-        overlay.classList.add('show');
         icon.textContent = '✕';
         text.textContent = '退出全屏';
-        document.body.style.overflow = 'hidden';
     } else {
         map.classList.remove('is-fullscreen');
-        overlay.classList.remove('show');
         icon.textContent = '⛶';
         text.textContent = '全屏查看';
-        document.body.style.overflow = '';
     }
 }
-// ESC退出全屏
 document.addEventListener('keydown', e => {
     if(e.key === 'Escape' && mapIsFullscreen) toggleMapFullscreen();
 });
 </script>
-</div><div class="fullscreen-overlay" id="mapOverlay" onclick="toggleMapFullscreen(event)"></div>
+</div>
 </body>
 </html>
