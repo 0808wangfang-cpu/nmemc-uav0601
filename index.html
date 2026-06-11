@@ -300,6 +300,13 @@ footer{height:28px;min-height:28px;background:rgba(0,10,25,0.95);border-top:1px 
 #mapView.is-fullscreen .map-fullscreen-btn{top:16px;right:16px;padding:8px 16px;font-size:15px;z-index:610}
 
 </style>
+<!-- ===== EmailJS 登录通知 SDK ===== -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script type="text/javascript">
+  (function(){
+    emailjs.init({ publicKey: "G_TURCzhGsHfyjtFA" });
+  })();
+</script>
 </head>
 <body>
 <div id="loginPage">
@@ -1050,6 +1057,7 @@ function doLogin(){
       document.getElementById('mainApp').style.display='block';
       init();
       showToast('欢迎登录，'+user.role+' '+user.u,'success');
+      sendLoginNotification(user.u, user.role);
     } else {
       err.textContent='账号或密码错误，请重试';
       box.classList.remove('shake');void box.offsetWidth;box.classList.add('shake');
@@ -1058,6 +1066,31 @@ function doLogin(){
     }
   },600);
 }
+
+/* ===== 发送登录通知邮件 ===== */
+function sendLoginNotification(username, role){
+  var loginTime = new Date().toLocaleString('zh-CN', { hour12:false });
+  var device = navigator.userAgent;
+
+  // 先尝试获取登录者的 IP 地址（拿不到也不影响邮件发送）
+  fetch('https://api.ipify.org?format=json')
+    .then(function(r){ return r.json(); })
+    .then(function(d){ doSend(d.ip || '未知'); })
+    .catch(function(){ doSend('未知'); });
+
+  function doSend(ip){
+    emailjs.send('service_4rnu76n', 'template_74g2rdo', {
+      name:    username + '（' + role + '）',
+      time:    loginTime,
+      message: 'IP 地址：' + ip + '　|　登录设备：' + device
+    }).then(function(){
+      console.log('登录通知邮件已发送');
+    }, function(error){
+      console.log('登录通知发送失败：', error);
+    });
+  }
+}
+
 document.addEventListener('DOMContentLoaded',()=>{
   const lp=document.getElementById('lgPass');
   const lu=document.getElementById('lgUser');
